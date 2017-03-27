@@ -17,8 +17,8 @@ public:
   std::string recv_string_paramter();
 private:
   Connection conn;
-  void send_byte(unsigned char& code);
+  void send_byte(int& code);
   unsigned char recv_byte();
-}
+};
 
 #endif

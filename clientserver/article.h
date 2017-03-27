@@ -15,6 +15,6 @@ private:
   std::string author;
   std::string text;
   int id;
-}
+};
 
 #endif

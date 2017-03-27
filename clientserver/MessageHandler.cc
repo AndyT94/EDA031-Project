@@ -7,19 +7,23 @@
 
 MessageHandler::MessageHandler(const Connection& c) : conn(c) {}
 
-void MessageHandler::send_byte(unsigned char& code) {
-  conn.write(code);
+void MessageHandler::send_byte(int& code) {
+  try {
+    conn.write(static_cast<unsigned char>(code));
+  } catch (...) {
+    throw ConnectionClosedException();
+  }
 }
 
 void MessageHandler::send_code(int& code) {
-  send_int(code);
+  send_byte(code);
 }
 
 void MessageHandler::send_int(int& value) {
-  conn.write((value >> 24) & 0xFF);
-  conn.write((value >> 16) & 0xFF);
-  conn.write((value >> 8)  & 0xFF);
-  conn.write(value & 0xFF);
+  send_byte((value >> 24) & 0xFF);
+  send_byte((value >> 16) & 0xFF);
+  send_byte((value >> 8)  & 0xFF);
+  send_byte(value & 0xFF);
 }
 
 void MessageHandler::send_int_parameter(int& param) {
@@ -36,11 +40,17 @@ void MessageHandler::send_string_parameter(string& param) {
 }
 
 unsigned char MessageHandler::recv_byte() {
-  return conn.read();
+  int byte;
+  try {
+    byte = conn.read();
+  } catch(...) {
+    throw ConnectionClosedException();
+  }
+  return byte;
 }
 
 int MessageHandler::recv_code() {
-  return recv_int();
+  return recv_byte();
 }
 
 int MessageHandler::recv_int() {
@@ -54,7 +64,8 @@ int MessageHandler::recv_int() {
 int MessageHandler::recv_int_parameter() {
   int code = recv_code();
   if (code != Protocol.PAR_NUM) {
-    throw new ConnectionClosedException();
+    throw ProtocolViolationException("Receive numeric parameter",
+        Protocol.PAR_NUM, code);
   }
   return recv_int();
 }
@@ -62,15 +73,17 @@ int MessageHandler::recv_int_parameter() {
 std::string MessageHandler::recv_string_paramter() {
   int code = recv_code();
   if (code != Protocol::PAR_STRING) {
-    throw new ConnectionClosedException();
+    throw ProtocolViolationException("Receive string parameter",
+        Protocol.PAR_STRING, code);
   }
   int n = recv_int();
   if (n < 0) {
-    throw new ConnectionClosedException();
+    throw ProtocolViolationException("Receive string parameter",
+        "Number of characters < 0");
   }
-  std::string result;
+  std::string result = "";
   for (int i = 1; i <= n; ++i) {
-    unsigned char ch = conn.read();
+    char ch = conn.read();
     result += ch;
   }
   return result;
