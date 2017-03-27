@@ -10,8 +10,6 @@ public:
   virtual void create_article(int& group_id, Article& article) = 0;
   virtual void delete_article(int& group_id, int& article_id) = 0;
   virtual Article get_article(int& group_id, int& article_id) const = 0;
-protected:
-  int newest_newsgroup;
 };
 
 #endif
