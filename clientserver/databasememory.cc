@@ -34,7 +34,7 @@ vector<Article> DatabaseMemory::list_articles(int& group_id) const override {
 }
 
 void DatabaseMemory::create_article(int& group_id, string& title, string& author, string& text) override {
-  //TODO
+  groups[group_id].create_article(title, author, text);
 }
 
 void DatabaseMemory::delete_article(int& group_id, int& article_id) override {
