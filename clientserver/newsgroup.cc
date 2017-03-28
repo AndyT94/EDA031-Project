@@ -28,9 +28,22 @@ Article NewsGroup::get_article(int &article_id const){
   return null;
 
 }
-void NewsGroup::delete_article(int &id,int &article_id const){
-
+void NewsGroup::delete_article(int &article_id const){
+  for(auto it = map.begin(); it!= map.end(); ++it){
+    if(*it->second.get_id() == article_id ){
+      map.erase(*it);
+    }
+  }
 }
+
+vector<Article> NewsGroup get_articles(){
+  vector<Article> articles;
+  for (auto it = map.begin(); it != map.end();++it){
+    articles.push_back(*it);
+  }
+  return articles;
+}
+
 
 
 }
