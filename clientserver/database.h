@@ -1,6 +1,9 @@
 #ifndef DATABASE_H
 #define DATABASE_H
 
+#include <string>
+#include <vector>
+
 class Database {
 public:
   virtual std::vector<Newsgroup> list_newsgroups() const = 0;
