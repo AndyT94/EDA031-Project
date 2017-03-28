@@ -1,3 +1,15 @@
+#include "server.h"
+#include "connection.h"
+#include "connectionclosedexception.h"
+
+#include <memory>
+#include <iostream>
+#include <string>
+#include <stdexcept>
+#include <cstdlib>
+
+using namespace std;
+
 int main(int argc, char* argv[]){
 	if (argc != 2) {
 		cerr << "Usage: myserver port-number" << endl;
@@ -22,16 +34,7 @@ int main(int argc, char* argv[]){
 		auto conn = server.waitForActivity();
 		if (conn != nullptr) {
 			try {
-				int nbr = readNumber(conn);
-				string result;
-				if (nbr > 0) {
-					result = "positive";
-				} else if (nbr == 0) {
-					result = "zero";
-				} else {
-					result = "negative";
-				}
-				writeString(conn, result);
+
 			} catch (ConnectionClosedException&) {
 				server.deregisterConnection(conn);
 				cout << "Client closed connection" << endl;

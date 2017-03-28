@@ -6,19 +6,17 @@
 
 class MessageHandler {
 public:
-  MessageHandler(const Connection& c);
-  void send_code(int& code);
-  void send_int(int& value);
-  void send_int_parameter(int& param);
-  void send_string_parameter(std::string& param);
-  int recv_code();
-  int recv_int();
-  int recv_int_parameter();
-  std::string recv_string_paramter();
+  void send_code(const Connection& conn, int code);
+  void send_int(const Connection& conn, int value);
+  void send_int_parameter(const Connection& conn, int param);
+  void send_string_parameter(const Connection& conn, std::string& param);
+  int recv_code(const Connection& conn);
+  int recv_int(const Connection& conn);
+  int recv_int_parameter(const Connection& conn);
+  std::string recv_string_paramter(const Connection& conn);
 private:
-  Connection conn;
-  void send_byte(int& code);
-  unsigned char recv_byte();
+  void send_byte(const Connection& conn, int code);
+  unsigned char recv_byte(const Connection& conn);
 };
 
 #endif

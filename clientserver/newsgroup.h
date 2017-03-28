@@ -19,4 +19,6 @@ private:
   string const name;
 
 
-}
+};
+
+#endif
