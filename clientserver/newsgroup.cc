@@ -36,12 +36,17 @@ void NewsGroup::delete_article(int &article_id const){
   }
 }
 
-vector<Article> NewsGroup get_articles(){
+vector<Article> NewsGroup::get_articles(){
   vector<Article> articles;
   for (auto it = map.begin(); it != map.end();++it){
     articles.push_back(*it);
   }
   return articles;
+}
+
+void NewsGroup::create_article(string &title,string& author, string& text){
+  Article a(title,author,text,counter++);
+  map.insert(make_pair(counter,a));
 }
 
 
