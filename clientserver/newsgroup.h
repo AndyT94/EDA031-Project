@@ -1,26 +1,27 @@
 #ifndef NEWSGROUP_H
 #define NEWSGROUP_H
+
+#include "article.h"
 #include <map>
 #include <string>
+#include <vector>
 
 class NewsGroup {
 public:
-  NewsGroup(int &id, string const name,std::std::map<int,Article> m);
-  std::int get_newsgroupId();
+  NewsGroup(int id, const std::string& name);
+  int get_newsgroupId();
   std::vector<Article> get_articles();
-  std::Article get_article(int &article_id const);
-  std:: string get_name();
-  std::void delete_article(int &article_id const);
-  std::int get_size();
-  std::void create_article(string &title, string &author,string &text);
+  Article& get_article(int article_id);
+  std::string get_name();
+  void delete_article(int article_id);
+  int get_size();
+  void create_article(std::string &title, std::string &author, std::string &text);
 
 private:
   std::map<int,Article> map;
   int id;
-  string const name;
+  std::string name;
   int counter;
-
-
 };
 
 #endif
