@@ -12,11 +12,13 @@ public:
   std:: string get_name();
   std::void delete_article(int &article_id const);
   std::int get_size();
+  std::void create_article(string &title, string &author,string &text);
 
 private:
   std::map<int,Article> map;
   int id;
   string const name;
+  int counter;
 
 
 }
