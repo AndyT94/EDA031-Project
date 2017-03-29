@@ -1,6 +1,8 @@
 #include "server.h"
 #include "connection.h"
 #include "connectionclosedexception.h"
+#include "databasememory.h"
+#include "MessageHandler.h"
 
 #include <memory>
 #include <iostream>
@@ -30,6 +32,8 @@ int main(int argc, char* argv[]){
 		exit(1);
 	}
 
+	DatabaseMemory db;
+	MessageHandler msg_handler;
 	while (true) {
 		auto conn = server.waitForActivity();
 		if (conn != nullptr) {

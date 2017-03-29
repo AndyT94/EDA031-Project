@@ -19,13 +19,12 @@ CXXFLAGS += $(DEPFLAGS)
 #CXXFLAGS =  -stdlib=libc++
 #CPPFLAGS =  -stdlib=libc++
 #CXXFLAGS += -stdlib=libc++
-LDFLAGS = -g -L.
+LDFLAGS = -L.
 LDLIBS = -lclientserver
 
 # Targets
-PROGS = newsserver
 
-all: libclientserver.a $(PROGS)
+all: libclientserver.a newsserver
 
 # Create the library; ranlib is for Darwin (OS X) and maybe other systems.
 # Doesn't seem to do any damage on other systems.
@@ -34,14 +33,14 @@ libclientserver.a: connection.o server.o
 	ar rv libclientserver.a  connection.o server.o
 	ranlib libclientserver.a
 
-newsserver: newsserver.o MessageHandler.o newsgroup.o article.o databasememory.o
+newsserver: newsserver.o article.o newsgroup.o databasememory.o MessageHandler.o
 
 # Phony targets
 .PHONY: all clean
 
 # Standard clean
 clean:
-	rm -f *.o libclientserver.a $(PROGS) *.d
+	rm -f *.o libclientserver.a $(PROGS)
 
 # Generate dependencies in *.d files
 %.d: %.cc
