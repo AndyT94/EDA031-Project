@@ -1,6 +1,6 @@
 #include "newsgroup.h"
 #include "article.h"
-#include "nosucharticleexception.h"
+#include "nosuchelementexception.h"
 #include <string>
 #include <map>
 #include <vector>
@@ -27,7 +27,7 @@ string NewsGroup::get_name(){
 Article& NewsGroup::get_article(int article_id){
   auto it = map.find(article_id);
   if(it == map.end()){
-    throw NoSuchArticleException();
+    throw NoSuchElementException();
   }
   return it->second;
 }
@@ -35,7 +35,7 @@ Article& NewsGroup::get_article(int article_id){
 void NewsGroup::delete_article(int article_id){
   auto it = map.find(article_id);
   if(it == map.end()){
-    throw NoSuchArticleException();
+    throw NoSuchElementException();
   }
   map.erase(article_id);
 }

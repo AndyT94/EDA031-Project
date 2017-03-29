@@ -19,8 +19,8 @@ CXXFLAGS += $(DEPFLAGS)
 #CXXFLAGS =  -stdlib=libc++
 #CPPFLAGS =  -stdlib=libc++
 #CXXFLAGS += -stdlib=libc++
-#LDFLAGS = -g -L.
-#LDLIBS = -lclientserver
+LDFLAGS = -g -L.
+LDLIBS = -lclientserver
 
 # Targets
 PROGS = newsserver
