@@ -1,5 +1,6 @@
 #include "newsgroup.h"
 #include "article.h"
+#include "nosucharticleexception.h"
 #include <string>
 #include <map>
 #include <vector>
@@ -7,7 +8,9 @@
 
 using namespace std;
 
-NewsGroup::NewsGroup(int id, const string& name): id(id), name(name) {}
+NewsGroup::NewsGroup() {}
+
+NewsGroup::NewsGroup(int i, const string& n): id(i), name(n), counter(0) {}
 
 int NewsGroup::get_newsgroupId(){
   return id;
@@ -23,14 +26,18 @@ string NewsGroup::get_name(){
 
 Article& NewsGroup::get_article(int article_id){
   auto it = map.find(article_id);
-  if(it != map.end()){
-    return it->second;
+  if(it == map.end()){
+    throw NoSuchArticleException();
   }
-  return NULL;
+  return it->second;
 }
 
 void NewsGroup::delete_article(int article_id){
-      map.erase(article_id);
+  auto it = map.find(article_id);
+  if(it == map.end()){
+    throw NoSuchArticleException();
+  }
+  map.erase(article_id);
 }
 
 vector<Article> NewsGroup::get_articles(){

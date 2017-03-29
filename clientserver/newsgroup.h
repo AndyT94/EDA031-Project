@@ -8,6 +8,7 @@
 
 class NewsGroup {
 public:
+  NewsGroup();
   NewsGroup(int id, const std::string& name);
   int get_newsgroupId();
   std::vector<Article> get_articles();
@@ -18,7 +19,7 @@ public:
   void create_article(std::string &title, std::string &author, std::string &text);
 
 private:
-  std::map<int,Article> map;
+  std::map<int, Article> map;
   int id;
   std::string name;
   int counter;

@@ -1,1 +1,3 @@
-article.o article.d : article.cc article.h
+article.o: article.cc article.h
+
+article.h:

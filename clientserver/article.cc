@@ -17,6 +17,6 @@ string Article::get_text() {
   return text;
 }
 
-id Article::get_id() {
+int Article::get_id() {
   return id;
 }

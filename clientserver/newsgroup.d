@@ -1,1 +1,7 @@
-newsgroup.o newsgroup.d : newsgroup.cc newsgroup.h article.h
+newsgroup.o: newsgroup.cc newsgroup.h article.h nosucharticleexception.h
+
+newsgroup.h:
+
+article.h:
+
+nosucharticleexception.h:
