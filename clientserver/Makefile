@@ -19,12 +19,13 @@ CXXFLAGS += $(DEPFLAGS)
 #CXXFLAGS =  -stdlib=libc++
 #CPPFLAGS =  -stdlib=libc++
 #CXXFLAGS += -stdlib=libc++
-LDFLAGS = -L.
-LDLIBS = -lclientserver
+#LDFLAGS = -g -L.
+#LDLIBS = -lclientserver
 
 # Targets
+PROGS = newsserver
 
-all: libclientserver.a newsserver
+all: libclientserver.a $(PROGS)
 
 # Create the library; ranlib is for Darwin (OS X) and maybe other systems.
 # Doesn't seem to do any damage on other systems.
