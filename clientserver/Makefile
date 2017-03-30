@@ -41,7 +41,7 @@ newsserver: newsserver.o article.o newsgroup.o databasememory.o MessageHandler.o
 
 # Standard clean
 clean:
-	rm -f *.o libclientserver.a $(PROGS)
+	rm -f *.o libclientserver.a $(PROGS) *.d
 
 # Generate dependencies in *.d files
 %.d: %.cc
