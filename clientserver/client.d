@@ -1,8 +1,2 @@
-client.o: client.cc connection.h connectionclosedexception.h \
-  messagehandler.h
-
-connection.h:
-
-connectionclosedexception.h:
-
-messagehandler.h:
+client.o client.d : client.cc connection.h connectionclosedexception.h \
+ MessageHandler.h
