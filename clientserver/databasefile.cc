@@ -7,10 +7,16 @@
 #include <vector>
 #include <map>
 #include <algorithm>
+#include <iostream>
+#include <fstream>
+#include <sstream>
 
 using namespace std;
 
-DatabaseFile::DatabaseFile() : newest_group(1) {}
+DatabaseFile::DatabaseFile() {
+  db = "newsdb.txt";
+  load(db);
+}
 
 vector<NewsGroup> DatabaseFile::list_newsgroups() const {
   vector<NewsGroup> result;
@@ -66,4 +72,39 @@ Article DatabaseFile::get_article(int group_id, int article_id) {
 
 bool DatabaseFile::hasGroup(int group_id) {
   return groups.count(group_id) != 0;
+}
+
+void DatabaseFile::load(const string& filename) {
+  string line;
+  ifstream file(filename));
+  if (file.is_open()) {
+    while (getline(file,line)) {
+      istringstream iss(line);
+      string object;
+      iss >> object;
+      if (object == "GROUP") {
+        string name;
+        iss >> name;
+        create_newsgroup(name);
+      } else if (object == "ART") {
+        int group_id;
+        iss >> group_id;
+        string title;
+        iss >> title;
+        string author;
+        iss >> author;
+        string text = "";
+        string word;
+        while(iss >> word) {
+          text += word;
+        }
+        create_article(group_id, title, author, text);
+      }
+    }
+    file.close();
+  }
+}
+
+void DatabaseFile::save() {
+
 }

@@ -23,7 +23,7 @@ LDFLAGS = -g -L.
 LDLIBS = -lclientserver
 
 # Targets
-PROGS = newsserver client
+PROGS = newsserver #client
 
 all: libclientserver.a $(PROGS)
 
@@ -35,7 +35,7 @@ libclientserver.a: connection.o server.o
 	ranlib libclientserver.a
 
 newsserver: newsserver.o article.o newsgroup.o databasememory.o MessageHandler.o
-client : MessageHandler.o client.o 
+#client : MessageHandler.o client.o
 # Phony targets
 .PHONY: all clean
 
