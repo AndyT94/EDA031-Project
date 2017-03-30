@@ -8,7 +8,6 @@
    #include <stdexcept>
    #include <cstdlib>
 
-
    using namespace std;
 
 
@@ -28,48 +27,85 @@ exit(1); }
 exit(1); }
     cout << "Type a command: ";
     string line;
-    string cmd;
-    Connection conn;
     MessageHandler mh;
     while (getline(cin,line)) {
-      istringstream iss(line);
-      cmd << iss(line);
         try {
-          switch(cmd)
+          switch(line)
         case "list":
-          mh.send_code(conn,COM_LIST_NG);
-          mh.send_code(conn,COM_END);
+          mh.send_code(conn,Protocol::COM_LIST_NG);
+          mh.send_code(conn,Protocol::COM_END);
+          mh.recv_code(conn);
+          int nbr = mh.recv_int_parameter(conn);
+          for(int i = 0; i < nbr; ++i){
+            int id = mh.recv_int_parameter(conn);
+            string name = mh.recv_string_paramter(conn);
+            cout << "NewsGroup id " << id << " " << " Name" << name << endl;
+          }
+          mh.recv_code(conn);
           break;
 
         case "create NewsGroup":
-          mh.send_code(conn,COM_CREATE_NG);
+          mh.send_code(conn,Protocol::COM_CREATE_NG);
           cout << "Name the NewsGroup :"
           string title;
           cin >> title;
           mh.send_string_parameter(conn,title);
-          mh.send_code(conn,COM_END);
+          mh.send_code(conn,Protocol::COM_END);
+
+          mh.recv_code(conn);
+          if(mh.recv_code(conn) == Protocol::ANS_ACK){
+            cout << "Succesfully created a new NewsGroup!"
+          } else {
+            cout << "NewsGroup already exists";
+            mh.recv_code(conn);
+          }
+          mh.recv_code(conn);
           break;
 
         case "delete NewsGroup":
-          mh.send_code(conn,COM_DELETE_NG);
+          mh.send_code(conn,Protocol::COM_DELETE_NG);
           cout << "Give the id of the group you want to delete:"
           int id;
           cin >> id
           mh.send_int_parameter(conn,id);
-          mh.send_code(conn,COM_END);
+          mh.send_code(conn,Protocol::COM_END);
+
+          mh.recv_code(conn);
+          if(mh.recv_code(conn) == Protocol::ANS_ACK){
+            cout << "Succesfully deleted the choosen NewsGroup!"
+          } else {
+            cout << "NewsGroup does not exist";
+            mh.recv_code(conn);
+          }
+          mh.recv_code(conn);
           break;
 
         case "list article":
-          mh.send_code(conn, COM_LIST_ART);
+          mh.send_code(conn,Protocol::COM_LIST_ART);
           cout << "Give the id of the NewsGroup:"
           int id;
           cin >> id
           mh.send_int_parameter(conn,id);
-          mh.send_code(conn,COM_END);
+          mh.send_code(conn,Protocol::COM_END);
+
+          mh.recv_code(conn);
+          if(mh.recv_code(conn) == Protocol::ANS_ACK){
+            int nbr = mh.recv_int_parameter(conn);
+            for(int i = 0; i < nbr;++i){
+              int id = mh.recv_int_parameter(conn);
+              string title = mh.recv_string_paramter(conn);
+              cout << "article id" << id << " " << "article title :" << title << endl;
+            }
+
+          } else {
+            cout << "NewsGroup does not exist";
+            mh.recv_code(conn);
+          }
+          mh.recv_code(conn);
           break;
 
         case "create article"
-          mh.send_code(conn, COM_LIST_ART);
+          mh.send_code(conn,Protocol::COM_LIST_ART);
           cout << "Give the id of the NewsGroup:"
           int id;
           cin >> id
@@ -87,10 +123,19 @@ exit(1); }
           cin >> text
           mh.send_string_parameter(conn,text);
           mh.send_code(conn,COM_END);
+
+          mh.recv_code(conn);
+          if(mh.recv_code(conn) == Protocol::ANS_ACK){
+            cout << "Succesfully created a article!"
+          } else {
+            cout << "NewsGroup does not exist";
+            mh.recv_code(conn);
+          }
+          mh.recv_code(conn);
           break;
 
         case "delete article"
-          mh.send_code(conn, COM_DELETE_ART);
+          mh.send_code(conn,Protocol::COM_DELETE_ART);
           cout << "Give the id of the NewsGroup:"
           int id;
           cin >> id
@@ -99,11 +144,21 @@ exit(1); }
           int id;
           cin >> id
           mh.send_int_parameter(conn,id);
-          mh.send_code(conn,COM_END);
+          mh.send_code(conn,Protocol::COM_END);
+
+          mh.recv_code(conn);
+          if(mh.recv_code(conn) == Protocol::ANS_ACK){
+            cout << "Succesfully deleted the choosen article!";
+          } else if ( mh.recv_code(conn) == Protocol::ANS_NAK) {
+            cout << "NewsGroup does not exist";
+          } else {
+            cout << "Article does not exist";
+          }
+          mh.recv_code(conn);
           break;
 
         case "get article"
-          mh.send_code(conn,COM_GET_ART);
+          mh.send_code(conn,Protocol::COM_GET_ART);
           cout << "Give the id of the NewsGroup:"
           int id;
           cin >> id
@@ -112,7 +167,17 @@ exit(1); }
           int id;
           cin >> id
           mh.send_int_parameter(conn,id);
-          mh.send_code(conn,COM_END);
+          mh.send_code(conn,Protocol::COM_END);
+
+          mh.recv_code(conn);
+          if(mh.recv_code(conn) == Protocol::ANS_ACK){
+            string title = mh.recv_string_paramter(conn);
+            string author = mh.recv_string_paramter(conn);
+            string text = mh.recv_string_paramter(conn);
+          } else if(mh.recv_code(conn) == Protocol::ANS_NAK){
+            cout << "Article does not exist";
+          }
+          mh.recv_code(conn);
           break;
           }
         } catch (ConnectionClosedException&) {
