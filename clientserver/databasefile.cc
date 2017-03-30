@@ -110,5 +110,10 @@ void DatabaseFile::load(const string& filename) {
 }
 
 void DatabaseFile::save() {
-  
+  ofstream file(db);
+  if (file.is_open()) {
+    for (auto it = groups.begin(); it != groups.end(); ++it) {
+      file << "GROUP " << it->second.get_name() << endl;
+    }
+  }
 }
