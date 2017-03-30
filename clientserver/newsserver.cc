@@ -84,7 +84,7 @@ int main(int argc, char* argv[]){
 							msg_handler.send_code(conn, Protocol::ANS_ACK);
 						} else {
 							msg_handler.send_code(conn, Protocol::ANS_NAK);
-							msg_handler.send_code(conn, Protocol::ERR_NG_ALREADY_EXISTS);
+							msg_handler.send_code(conn, Protocol::ERR_NG_DOES_NOT_EXIST);
 						}
 						msg_handler.send_code(conn, Protocol::ANS_END);
 						break;
@@ -98,6 +98,7 @@ int main(int argc, char* argv[]){
 						if (db.hasGroup(group_id)) {
 							vector<Article> a;
 							a = db.list_articles(group_id);
+							msg_handler.send_code(conn, Protocol::ANS_ACK);
 							msg_handler.send_int_parameter(conn, a.size());
 							for (unsigned int i = 0; i < a.size(); ++i) {
 								msg_handler.send_int_parameter(conn, a[i].get_id());
@@ -118,6 +119,9 @@ int main(int argc, char* argv[]){
 						author = msg_handler.recv_string_paramter(conn);
 						string text;
 						text = msg_handler.recv_string_paramter(conn);
+						if (msg_handler.recv_code(conn) != Protocol::COM_END) {
+							throw ConnectionClosedException();
+						}
 						msg_handler.send_code(conn, Protocol::ANS_CREATE_ART);
 						if (db.create_article(group_id, title, author, text)) {
 							msg_handler.send_code(conn, Protocol::ANS_ACK);
@@ -138,6 +142,8 @@ int main(int argc, char* argv[]){
 						if(!db.hasGroup(group_id)) {
 							msg_handler.send_code(conn, Protocol::ANS_NAK);
 							msg_handler.send_code(conn, Protocol::ERR_NG_DOES_NOT_EXIST);
+							msg_handler.send_code(conn, Protocol::ANS_END);
+							break;
 						}
 						try {
 							db.delete_article(group_id, article_id);
@@ -159,6 +165,8 @@ int main(int argc, char* argv[]){
 						if(!db.hasGroup(group_id)) {
 							msg_handler.send_code(conn, Protocol::ANS_NAK);
 							msg_handler.send_code(conn, Protocol::ERR_NG_DOES_NOT_EXIST);
+							msg_handler.send_code(conn, Protocol::ANS_END);
+							break;
 						}
 						try {
 							Article a = db.get_article(group_id, article_id);
