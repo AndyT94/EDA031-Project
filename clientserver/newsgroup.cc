@@ -49,6 +49,7 @@ vector<Article> NewsGroup::get_articles(){
 }
 
 void NewsGroup::create_article(string &title,string& author, string& text){
-  Article a(title,author,text,counter++);
+  Article a(title,author,text,counter);
   map.insert(make_pair(counter,a));
+  ++counter;
 }

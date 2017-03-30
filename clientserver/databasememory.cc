@@ -25,7 +25,7 @@ vector<NewsGroup> DatabaseMemory::list_newsgroups() const {
 
 bool DatabaseMemory::create_newsgroup(const string& name) {
   for (auto it = groups.begin(); it != groups.end(); ++it) {
-    if (it->second == name) {
+    if (it->second.get_name() == name) {
       return false;
     }
   }
@@ -65,5 +65,5 @@ Article DatabaseMemory::get_article(int group_id, int article_id) {
 }
 
 bool DatabaseMemory::hasGroup(int group_id) {
-  return group.count(group_id) != 0;
+  return groups.count(group_id) != 0;
 }

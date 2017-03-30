@@ -1,9 +1,11 @@
 #include "server.h"
 #include "connection.h"
 #include "connectionclosedexception.h"
+#include "nosuchelementexception.h"
 #include "databasememory.h"
 #include "MessageHandler.h"
 #include "newsgroup.h"
+#include "protocol.h"
 
 #include <memory>
 #include <iostream>
@@ -41,11 +43,12 @@ int main(int argc, char* argv[]){
 			try {
 				auto cmd = msg_handler.recv_code(conn);
 				switch (cmd) {
-					case Protocol::COM_LIST_NG:
-						if (msg_handler.recv_byte() != Protocol::COM_END) {
+					case Protocol::COM_LIST_NG: {
+						if (msg_handler.recv_code(conn) != Protocol::COM_END) {
 							throw ConnectionClosedException();
 						}
-						vector<NewsGroup> v = db.list_newsgroups();
+						vector<NewsGroup> v;
+						v = db.list_newsgroups();
 						msg_handler.send_code(conn, Protocol::ANS_LIST_NG);
 						msg_handler.send_int_parameter(conn, v.size());
 						for (unsigned int i = 0; i < v.size(); ++i) {
@@ -55,44 +58,47 @@ int main(int argc, char* argv[]){
 						msg_handler.send_code(conn, Protocol::ANS_END);
 						break;
 
-					case Protocol::COM_CREATE_NG:
-						string name = msg_handler.recv_string_paramter(conn);
-						if (msg_handler.recv_byte(conn) != Protocol::COM_END) {
+					} case Protocol::COM_CREATE_NG: {
+						string name;
+						name = msg_handler.recv_string_paramter(conn);
+						if (msg_handler.recv_code(conn) != Protocol::COM_END) {
 							throw ConnectionClosedException();
 						}
 						msg_handler.send_code(conn, Protocol::ANS_CREATE_NG);
 						if (db.create_newsgroup(name)) {
-							msg_handler.send_byte(conn, Protocol::ANS_ACK);
+							msg_handler.send_code(conn, Protocol::ANS_ACK);
 						} else {
-							msg_handler.send_byte(conn, Protocol::ANS_NAK);
-							msg_handler.send_byte(conn, Protocol::ERR_NG_ALREADY_EXISTS);
+							msg_handler.send_code(conn, Protocol::ANS_NAK);
+							msg_handler.send_code(conn, Protocol::ERR_NG_ALREADY_EXISTS);
 						}
-						msg_handler.send_byte(conn, Protocol::ANS_END);
+						msg_handler.send_code(conn, Protocol::ANS_END);
 						break;
 
-					case Protocol::COM_DELETE_NG:
+					}	case Protocol::COM_DELETE_NG: {
 						int group_id = msg_handler.recv_int_parameter(conn);
-						if (msg_handler.recv_byte(conn) != Protocol::COM_END) {
+						if (msg_handler.recv_code(conn) != Protocol::COM_END) {
 							throw ConnectionClosedException();
 						}
 						msg_handler.send_code(conn, Protocol::ANS_DELETE_NG);
 						if (db.delete_newsgroup(group_id)) {
-							msg_handler.send_byte(conn, Protocol::ANS_ACK);
+							msg_handler.send_code(conn, Protocol::ANS_ACK);
 						} else {
-							msg_handler.send_byte(conn, Protocol::ANS_NAK);
-							msg_handler.send_byte(conn, Protocol::ERR_NG_ALREADY_EXISTS);
+							msg_handler.send_code(conn, Protocol::ANS_NAK);
+							msg_handler.send_code(conn, Protocol::ERR_NG_DOES_NOT_EXIST);
 						}
-						msg_handler.send_byte(conn, Protocol::ANS_END);
+						msg_handler.send_code(conn, Protocol::ANS_END);
 						break;
 
-					case Protocol::COM_LIST_ART:
+					} case Protocol::COM_LIST_ART: {
 						int group_id = msg_handler.recv_int_parameter(conn);
-						if (msg_handler.recv_byte(conn) != Protocol::COM_END) {
+						if (msg_handler.recv_code(conn) != Protocol::COM_END) {
 							throw ConnectionClosedException();
 						}
 						msg_handler.send_code(conn, Protocol::ANS_LIST_ART);
 						if (db.hasGroup(group_id)) {
-							vector<Article> a = db.list_articles(group_id);
+							vector<Article> a;
+							a = db.list_articles(group_id);
+							msg_handler.send_code(conn, Protocol::ANS_ACK);
 							msg_handler.send_int_parameter(conn, a.size());
 							for (unsigned int i = 0; i < a.size(); ++i) {
 								msg_handler.send_int_parameter(conn, a[i].get_id());
@@ -100,71 +106,81 @@ int main(int argc, char* argv[]){
 							}
 						} else {
 							msg_handler.send_code(conn, Protocol::ANS_NAK);
-							msg_handler.send_byte(conn, Protocol::ERR_NG_DOES_NOT_EXIST);
+							msg_handler.send_code(conn, Protocol::ERR_NG_DOES_NOT_EXIST);
 						}
 						msg_handler.send_code(conn, Protocol::ANS_END);
 						break;
 
-					case Protocol::COM_CREATE_ART:
+					} case Protocol::COM_CREATE_ART: {
 						int group_id = msg_handler.recv_int_parameter(conn);
-						string title = msg_handler.recv_string_paramter(conn);
-						string author = msg_handler.recv_string_paramter(conn);
-						string text = msg_handler.recv_string_paramter(conn);
+						string title;
+						title = msg_handler.recv_string_paramter(conn);
+						string author;
+						author = msg_handler.recv_string_paramter(conn);
+						string text;
+						text = msg_handler.recv_string_paramter(conn);
+						if (msg_handler.recv_code(conn) != Protocol::COM_END) {
+							throw ConnectionClosedException();
+						}
 						msg_handler.send_code(conn, Protocol::ANS_CREATE_ART);
 						if (db.create_article(group_id, title, author, text)) {
 							msg_handler.send_code(conn, Protocol::ANS_ACK);
 						} else {
 							msg_handler.send_code(conn, Protocol::ANS_NAK);
-							msg_handler.send_byte(conn, Protocol::ERR_NG_DOES_NOT_EXIST);
+							msg_handler.send_code(conn, Protocol::ERR_NG_DOES_NOT_EXIST);
 						}
-						msg_handler.send_byte(conn, Protocol::ANS_END);
+						msg_handler.send_code(conn, Protocol::ANS_END);
 						break;
 
-					case Protocol::COM_DELETE_ART:
+					} case Protocol::COM_DELETE_ART: {
 						int group_id = msg_handler.recv_int_parameter(conn);
 						int article_id = msg_handler.recv_int_parameter(conn);
-						if (msg_handler.recv_byte(conn) != Protocol::COM_END) {
+						if (msg_handler.recv_code(conn) != Protocol::COM_END) {
 							throw ConnectionClosedException();
 						}
-						msg_handler.send_code(Protocol::ANS_DELETE_ART);
+						msg_handler.send_code(conn, Protocol::ANS_DELETE_ART);
 						if(!db.hasGroup(group_id)) {
 							msg_handler.send_code(conn, Protocol::ANS_NAK);
-							msg_handler.send_byte(conn, Protocol::ERR_NG_DOES_NOT_EXIST);
+							msg_handler.send_code(conn, Protocol::ERR_NG_DOES_NOT_EXIST);
+							msg_handler.send_code(conn, Protocol::ANS_END);
+							break;
 						}
 						try {
 							db.delete_article(group_id, article_id);
 							msg_handler.send_code(conn, Protocol::ANS_ACK);
 						} catch (NoSuchElementException&) {
 							msg_handler.send_code(conn, Protocol::ANS_NAK);
-							msg_handler.send_byte(conn, Protocol::ERR_ART_DOES_NOT_EXIST);
+							msg_handler.send_code(conn, Protocol::ERR_ART_DOES_NOT_EXIST);
 						}
-						msg_handler.send_byte(conn, Protocol::ANS_END);
+						msg_handler.send_code(conn, Protocol::ANS_END);
 						break;
 
-					case Protocol::COM_GET_ART:
+					} case Protocol::COM_GET_ART: {
 						int group_id = msg_handler.recv_int_parameter(conn);
 						int article_id = msg_handler.recv_int_parameter(conn);
-						if (msg_handler.recv_byte(conn) != Protocol::COM_END) {
+						if (msg_handler.recv_code(conn) != Protocol::COM_END) {
 							throw ConnectionClosedException();
 						}
-						msg_handler.send_code(Protocol::ANS_GET_ART);
+						msg_handler.send_code(conn, Protocol::ANS_GET_ART);
 						if(!db.hasGroup(group_id)) {
 							msg_handler.send_code(conn, Protocol::ANS_NAK);
-							msg_handler.send_byte(conn, Protocol::ERR_NG_DOES_NOT_EXIST);
+							msg_handler.send_code(conn, Protocol::ERR_NG_DOES_NOT_EXIST);
+							msg_handler.send_code(conn, Protocol::ANS_END);
+							break;
 						}
 						try {
 							Article a = db.get_article(group_id, article_id);
 							msg_handler.send_code(conn, Protocol::ANS_ACK);
-							msg_handler.send_string_parameter(a.get_title());
-							msg_handler.send_string_parameter(a.get_author());
-							msg_handler.send_string_parameter(a.get_text());
+							msg_handler.send_string_parameter(conn, a.get_title());
+							msg_handler.send_string_parameter(conn, a.get_author());
+							msg_handler.send_string_parameter(conn, a.get_text());
 						} catch (NoSuchElementException&) {
 							msg_handler.send_code(conn, Protocol::ANS_NAK);
-							msg_handler.send_byte(conn, Protocol::ERR_ART_DOES_NOT_EXIST);
+							msg_handler.send_code(conn, Protocol::ERR_ART_DOES_NOT_EXIST);
 						}
-						msg_handler.send_byte(conn, Protocol::ANS_END);
+						msg_handler.send_code(conn, Protocol::ANS_END);
 						break;
-					default:
+					} default:
 						throw ConnectionClosedException();
 						break;
 				}

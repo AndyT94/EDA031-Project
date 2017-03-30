@@ -33,7 +33,7 @@ void MessageHandler::send_int_parameter(const shared_ptr<Connection>& conn, int 
   send_int(conn, param);
 }
 
-void MessageHandler::send_string_parameter(const shared_ptr<Connection>& conn, string& param) {
+void MessageHandler::send_string_parameter(const shared_ptr<Connection>& conn, const string& param) {
   send_code(conn, Protocol::PAR_STRING);
   send_int(conn, param.length());
   for (unsigned int i = 0; i < param.length(); ++i) {
