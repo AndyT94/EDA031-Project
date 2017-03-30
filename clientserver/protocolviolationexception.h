@@ -8,9 +8,9 @@ struct ProtocolViolationException {
 	std::string error;
 	int prot_id;
 	int code;
-	ProtocolViolationException(std::string& m, int& p, int& c) :
+	ProtocolViolationException(const std::string& m, int p, int c) :
     message(m), prot_id(p), code(c) {}
 
-	ProtocolViolationException(std::string& m, std::string& em) : message(m), error(e) {}
+	ProtocolViolationException(const std::string& m, const std::string& e) : message(m), error(e) {}
 };
 #endif

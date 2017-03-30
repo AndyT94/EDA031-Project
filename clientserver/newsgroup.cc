@@ -1,10 +1,16 @@
 #include "newsgroup.h"
+#include "article.h"
+#include "nosuchelementexception.h"
 #include <string>
 #include <map>
+#include <vector>
+#include <cstddef>
 
 using namespace std;
 
-NewsGroup::NewsGroup(int &id,string const name,map<int,Article> m ): id(id),map(m), name(name) {}
+NewsGroup::NewsGroup() {}
+
+NewsGroup::NewsGroup(int i, const string& n): id(i), name(n), counter(0) {}
 
 int NewsGroup::get_newsgroupId(){
   return id;
@@ -18,28 +24,26 @@ string NewsGroup::get_name(){
   return name;
 }
 
-Article NewsGroup::get_article(int &article_id const){
-  map<int,Article>:: iterator p;
-
-  p = map.find(article_id);
-  if(p != map.end()){
-    return p->second;
+Article& NewsGroup::get_article(int article_id){
+  auto it = map.find(article_id);
+  if(it == map.end()){
+    throw NoSuchElementException();
   }
-  return null;
-
+  return it->second;
 }
-void NewsGroup::delete_article(int &article_id const){
-  for(auto it = map.begin(); it!= map.end(); ++it){
-    if(*it->second.get_id() == article_id ){
-      map.erase(*it);
-    }
+
+void NewsGroup::delete_article(int article_id){
+  auto it = map.find(article_id);
+  if(it == map.end()){
+    throw NoSuchElementException();
   }
+  map.erase(article_id);
 }
 
 vector<Article> NewsGroup::get_articles(){
   vector<Article> articles;
-  for (auto it = map.begin(); it != map.end();++it){
-    articles.push_back(*it);
+  for (auto it = map.begin(); it != map.end(); ++it){
+    articles.push_back(it->second);
   }
   return articles;
 }
@@ -47,8 +51,4 @@ vector<Article> NewsGroup::get_articles(){
 void NewsGroup::create_article(string &title,string& author, string& text){
   Article a(title,author,text,counter++);
   map.insert(make_pair(counter,a));
-}
-
-
-
 }
