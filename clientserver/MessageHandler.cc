@@ -9,7 +9,7 @@
 
 using namespace std;
 
-void MessageHandler::send_byte(const shared_ptr<Connection>& conn, int code) {
+void MessageHandler::send_byte(shared_ptr<Connection>& conn, int code) {
   try {
     conn->write(static_cast<unsigned char>(code));
   } catch (...) {
@@ -17,23 +17,23 @@ void MessageHandler::send_byte(const shared_ptr<Connection>& conn, int code) {
   }
 }
 
-void MessageHandler::send_code(const shared_ptr<Connection>& conn, int code) {
+void MessageHandler::send_code(shared_ptr<Connection>& conn, int code) {
   send_byte(conn, code);
 }
 
-void MessageHandler::send_int(const shared_ptr<Connection>& conn, int value) {
+void MessageHandler::send_int(shared_ptr<Connection>& conn, int value) {
   send_byte(conn, (value >> 24) & 0xFF);
   send_byte(conn, (value >> 16) & 0xFF);
   send_byte(conn, (value >> 8)  & 0xFF);
   send_byte(conn, value & 0xFF);
 }
 
-void MessageHandler::send_int_parameter(const shared_ptr<Connection>& conn, int param) {
+void MessageHandler::send_int_parameter(shared_ptr<Connection>& conn, int param) {
   send_code(conn, Protocol::PAR_NUM);
   send_int(conn, param);
 }
 
-void MessageHandler::send_string_parameter(const shared_ptr<Connection>& conn, const string& param) {
+void MessageHandler::send_string_parameter(shared_ptr<Connection>& conn, const string& param) {
   send_code(conn, Protocol::PAR_STRING);
   send_int(conn, param.length());
   for (unsigned int i = 0; i < param.length(); ++i) {
@@ -41,7 +41,7 @@ void MessageHandler::send_string_parameter(const shared_ptr<Connection>& conn, c
   }
 }
 
-unsigned char MessageHandler::recv_byte(const shared_ptr<Connection>& conn) {
+unsigned char MessageHandler::recv_byte(shared_ptr<Connection>& conn) {
   int byte;
   try {
     byte = conn->read();
@@ -51,11 +51,11 @@ unsigned char MessageHandler::recv_byte(const shared_ptr<Connection>& conn) {
   return byte;
 }
 
-int MessageHandler::recv_code(const shared_ptr<Connection>& conn) {
+int MessageHandler::recv_code(shared_ptr<Connection>& conn) {
   return recv_byte(conn);
 }
 
-int MessageHandler::recv_int(const shared_ptr<Connection>& conn) {
+int MessageHandler::recv_int(shared_ptr<Connection>& conn) {
   unsigned char byte1 = recv_byte(conn);
   unsigned char byte2 = recv_byte(conn);
   unsigned char byte3 = recv_byte(conn);
@@ -63,7 +63,7 @@ int MessageHandler::recv_int(const shared_ptr<Connection>& conn) {
   return (byte1 << 24) | (byte2 << 16) | (byte3 << 8) | byte4;
 }
 
-int MessageHandler::recv_int_parameter(const shared_ptr<Connection>& conn) {
+int MessageHandler::recv_int_parameter(shared_ptr<Connection>& conn) {
   int code = recv_code(conn);
   if (code != Protocol::PAR_NUM) {
     throw ProtocolViolationException("Receive numeric parameter",
@@ -72,7 +72,7 @@ int MessageHandler::recv_int_parameter(const shared_ptr<Connection>& conn) {
   return recv_int(conn);
 }
 
-std::string MessageHandler::recv_string_paramter(const shared_ptr<Connection>& conn) {
+std::string MessageHandler::recv_string_paramter(shared_ptr<Connection>& conn) {
   int code = recv_code(conn);
   if (code != Protocol::PAR_STRING) {
     throw ProtocolViolationException("Receive string parameter",

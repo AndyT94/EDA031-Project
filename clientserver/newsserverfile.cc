@@ -2,7 +2,7 @@
 #include "connection.h"
 #include "connectionclosedexception.h"
 #include "nosuchelementexception.h"
-#include "databasememory.h"
+#include "databasefile.h"
 #include "MessageHandler.h"
 #include "newsgroup.h"
 #include "protocol.h"
@@ -35,7 +35,7 @@ int main(int argc, char* argv[]){
 		exit(1);
 	}
 
-	DatabaseMemory db;
+	DatabaseFile db;
 	MessageHandler msg_handler;
 	while (true) {
 		auto conn = server.waitForActivity();

@@ -2,7 +2,7 @@
    /* myclient.cc: sample client program */
    #include "connection.h"
    #include "connectionclosedexception.h"
-   #include "messagehandler.h"
+   #include "MessageHandler.h"
    #include <iostream>
    #include <string>
    #include <stdexcept>

@@ -23,7 +23,7 @@ private:
   int newest_group;
   std::map<int, NewsGroup> groups;
   std::string db;
-  void load(const string& filename);
+  void load(const std::string& filename);
   void save();
 };
 
