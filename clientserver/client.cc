@@ -1,12 +1,12 @@
 
    /* myclient.cc: sample client program */
    #include "connection.h"
-   #include "client.h"
    #include "connectionclosedexception.h"
    #include <iostream>
    #include <string>
    #include <stdexcept>
    #include <cstdlib>
+   #include "messagehandler.h"
    using namespace std;
    /*
     * Send an integer to the server as four bytes.
@@ -42,15 +42,95 @@ exit(1); }
     if (!conn.isConnected()) {
         cerr << "Connection attempt failed" << endl;
 exit(1); }
-    cout << "Type a number: ";
-    int nbr;
-    while (cin >> nbr) {
+    cout << "Type a command: ";
+    string line;
+    string cmd;
+    Connection conn;
+    MessageHandler mh;
+    while (getLine(cin,line)) {
+      istringtream iss(line);
+      cmd << iss(line);
         try {
-            cout << nbr << " is ...";
-            writeNumber(conn, nbr);
-            string reply = readString(conn);
-            cout << " " << reply << endl;
-            cout << "Type another number: ";
+          switch(cmd)
+        case "list":
+          mh.send_code(conn,COM_LIST_NG);
+          mh.send_code(conn,COM_END);
+          break;
+
+        case "create NewsGroup":
+          mh.send_code(conn,COM_CREATE_NG);
+          cout << "Name the NewsGroup :"
+          string title;
+          cin >> title;
+          mh.send_string_parameter(conn,title);
+          mh.send_code(conn,COM_END);
+          break;
+
+        case "delete NewsGroup":
+          mh.send_code(conn,COM_DELETE_NG);
+          cout << "Give the id of the group you want to delete:"
+          int id;
+          cin >> id
+          mh.send_int_parameter(conn,id);
+          mh.send_code(conn,COM_END);
+          break;
+
+        case "list article":
+          mh.send_code(conn, COM_LIST_ART);
+          cout << "Give the id of the NewsGroup:"
+          int id;
+          cin >> id
+          mh.send_int_parameter(conn,id);
+          mh.send_code(conn,COM_END);
+          break;
+
+        case "create article"
+          mh.send_code(conn, COM_LIST_ART);
+          cout << "Give the id of the NewsGroup:"
+          int id;
+          cin >> id
+          mh.send_int_parameter(conn,id);
+          cout << "Give the article a title:"
+          string title;
+          cin >> title
+          mh.send_string_parameter(conn,title);
+          cout << "Write who is the author of the article:"
+          string author;
+          cin >> author
+          mh.send_string_parameter(conn,author);
+          cout << "Write the text:"
+          string text;
+          cin >> text
+          mh.send_string_parameter(conn,text);
+          mh.send_code(conn,COM_END);
+          break;
+
+        case "delete article"
+          mh.send_code(conn, COM_DELETE_ART);
+          cout << "Give the id of the NewsGroup:"
+          int id;
+          cin >> id
+          mh.send_int_parameter(conn,id);
+          cout << "Give the id of the article you want to delete:"
+          int id;
+          cin >> id
+          mh.send_int_parameter(conn,id);
+          mh.send_code(conn,COM_END);
+          break;
+
+        case "get article"
+          mh.send_code(conn,COM_GET_ART);
+          cout << "Give the id of the NewsGroup:"
+          int id;
+          cin >> id
+          mh.send_int_parameter(conn,id);
+          cout << "Give the id of the article you want to delete:"
+          int id;
+          cin >> id
+          mh.send_int_parameter(conn,id);
+          mh.send_code(conn,COM_END);
+          break;
+          }
         } catch (ConnectionClosedException&) {
             cout << " no reply from server. Exiting." << endl;
             exit(1);
