@@ -3,6 +3,7 @@
 #include "connectionclosedexception.h"
 #include "nosuchelementexception.h"
 #include "databasememory.h"
+#include "databasefile.h"
 #include "MessageHandler.h"
 #include "newsgroup.h"
 #include "protocol.h"
