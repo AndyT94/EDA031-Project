@@ -2,30 +2,14 @@
    /* myclient.cc: sample client program */
    #include "connection.h"
    #include "connectionclosedexception.h"
+   #include "messagehandler.h"
    #include <iostream>
    #include <string>
    #include <stdexcept>
    #include <cstdlib>
-   #include "messagehandler.h"
+
+
    using namespace std;
-   /*
-    * Send an integer to the server as four bytes.
-    */
-   void writeNumber(const Connection& conn, int value) {
-       conn.write((value >> 24) & 0xFF);
-       conn.write((value >> 16) & 0xFF);
-       conn.write((value >> 8)  & 0xFF);
-       conn.write(value & 0xFF);
-}
-   /*
-    * Read a string from the server.
-    */
-   string readString(const Connection& conn) {
-       string s;
-       char ch;
-       while ((ch = conn.read()) != ’$’) {
-s += ch; }
-return s; }
 
 
  int main(int argc, char* argv[]) {
@@ -47,8 +31,8 @@ exit(1); }
     string cmd;
     Connection conn;
     MessageHandler mh;
-    while (getLine(cin,line)) {
-      istringtream iss(line);
+    while (getline(cin,line)) {
+      istringstream iss(line);
       cmd << iss(line);
         try {
           switch(cmd)

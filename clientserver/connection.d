@@ -1,1 +1,5 @@
-connection.o connection.d : connection.cc connection.h connectionclosedexception.h
+connection.o: connection.cc connection.h connectionclosedexception.h
+
+connection.h:
+
+connectionclosedexception.h:
