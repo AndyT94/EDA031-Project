@@ -114,6 +114,10 @@ void DatabaseFile::save() {
   if (file.is_open()) {
     for (auto it = groups.begin(); it != groups.end(); ++it) {
       file << "GROUP " << it->second.get_name() << endl;
+      vector<Article> articles = it->second.get_articles();
+      for (auto a_it = articles.begin(); a_it != articles.end(); ++a_it) {
+        file << "ART " << a_it->get_id() << " " << a_it->get_title() << " " << a_it->get_author() << " " << a_it->get_text() << endl;
+      }
     }
   }
 }
