@@ -40,13 +40,13 @@ exit(1); }
           for(int i = 0; i < nbr; ++i){
             int id = mh.recv_int_parameter(conn);
             string name = mh.recv_string_paramter(conn);
-            cout << "NewsGroup id " << id << " " << " Name" << name << endl;
+            cout << "NewsGroup id: " << id << " " << "Name: " << " " << name << endl;
           }
           mh.recv_code(conn);
 
         } else if(line == "create NewsGroup"){
           mh.send_code(conn,Protocol::COM_CREATE_NG);
-          cout << "Name the NewsGroup :";
+          cout << "Name the NewsGroup: ";
           string title;
           cin >> title;
           mh.send_string_parameter(conn,title);
@@ -63,7 +63,7 @@ exit(1); }
 
         } else if(line == "delete NewsGroup"){
           mh.send_code(conn,Protocol::COM_DELETE_NG);
-          cout << "Give the id of the group you want to delete:";
+          cout << "Give the id of the group you want to delete: ";
           int id;
           cin >> id;
           mh.send_int_parameter(conn,id);
@@ -79,7 +79,7 @@ exit(1); }
           mh.recv_code(conn);
         } else if(line == "list article"){
           mh.send_code(conn,Protocol::COM_LIST_ART);
-          cout << "Give the id of the NewsGroup:";
+          cout << "Give the id of the NewsGroup: ";
           int id;
           cin >> id;
           mh.send_int_parameter(conn,id);
@@ -91,7 +91,7 @@ exit(1); }
             for(int i = 0; i < nbr;++i){
               int id = mh.recv_int_parameter(conn);
               string title = mh.recv_string_paramter(conn);
-              cout << "article id" << id << " " << "article title :" << title << endl;
+              cout << "article id :" << id << " " << "article title: " << " " << title << endl;
             }
 
           } else {
@@ -101,23 +101,23 @@ exit(1); }
           mh.recv_code(conn);
         } else if(line == "create article"){
           mh.send_code(conn,Protocol::COM_LIST_ART);
-          cout << "Give the id of the NewsGroup:";
+          cout << "Give the id of the NewsGroup: ";
           int id;
           cin >> id;
           mh.send_int_parameter(conn,id);
-          cout << "Give the article a title:";
+          cout << "Give the article a title: ";
           string title;
           cin >> title;
           mh.send_string_parameter(conn,title);
-          cout << "Write who is the author of the article:";
+          cout << "Write who is the author of the article: ";
           string author;
           cin >> author;
           mh.send_string_parameter(conn,author);
-          cout << "Write the text:";
+          cout << "Write the text: ";
           string text;
           cin >> text;
           mh.send_string_parameter(conn,text);
-          mh.send_code(conn,COM_END);
+          mh.send_code(conn,Protocol::COM_END);
 
           mh.recv_code(conn);
           if(mh.recv_code(conn) == Protocol::ANS_ACK){
@@ -130,13 +130,13 @@ exit(1); }
 
         }else if(line == "delete article"){
           mh.send_code(conn,Protocol::COM_DELETE_ART);
-          cout << "Give the id of the NewsGroup:";
+          cout << "Give the id of the NewsGroup: ";
           int id;
           cin >> id;
           mh.send_int_parameter(conn,id);
-          cout << "Give the id of the article you want to delete:";
-          int id;
-          cin >> id;
+          cout << "Give the id of the article you want to delete: ";
+          int a_id;
+          cin >> a_id;
           mh.send_int_parameter(conn,id);
           mh.send_code(conn,Protocol::COM_END);
 
@@ -153,13 +153,13 @@ exit(1); }
           mh.recv_code(conn);
         } else if(line == "get article"){
           mh.send_code(conn,Protocol::COM_GET_ART);
-          cout << "Give the id of the NewsGroup:";
+          cout << "Give the id of the NewsGroup: ";
           int id;
           cin >> id;
           mh.send_int_parameter(conn,id);
           cout << "Give the id of the article you want to delete";
-          int id;
-          cin >> id;
+          int a_id;
+          cin >> a_id;
           mh.send_int_parameter(conn,id);
           mh.send_code(conn,Protocol::COM_END);
 
@@ -178,9 +178,8 @@ exit(1); }
           mh.recv_code(conn);
 
         }
-          }
+
         } catch (ConnectionClosedException&) {
             cout << " no reply from server. Exiting." << endl;
             exit(1);
-} }
-}
+}}}
