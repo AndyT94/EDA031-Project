@@ -82,28 +82,40 @@ void DatabaseFile::load(const string& filename) {
   string line;
   ifstream file(filename);
   if (file.is_open()) {
-    while (getline(file,line)) {
-      istringstream iss(line);
-      string object;
-      iss >> object;
-      if (object == "GROUP") {
-        string name;
-        iss >> name;
-        create_newsgroup(name);
-      } else if (object == "ART") {
-        int group_id;
-        iss >> group_id;
-        string title;
-        iss >> title;
-        string author;
-        iss >> author;
-        string text = "";
-        string word;
-        while(iss >> word) {
-          text += word;
+    string db;
+    while(getline(file, line)) {
+      db += line + "\n";
+    }
+    istringstream iss(db);
+    string word;
+    int count = 0;
+    while(getline(iss, word, '$')) {
+      ++count;
+      if (word == "GROUP") {
+          int group_id;
+          string id;
+          getline(iss, id, '$');
+          istringstream ss(id);
+          ss >> group_id;
+          string name;
+          getline(iss, name, '$');
+          NewsGroup n(group_id, name);
+          groups.insert(make_pair(group_id, n));
+          newest_group = max(newest_group, group_id);
+        } else if (word == "ART") {
+          int group_id;
+          string id;
+          getline(iss, id, '$');
+          istringstream ss(id);
+          ss >> group_id;
+          string title;
+          getline(iss, title, '$');
+          string author;
+          getline(iss, author, '$');
+          string text;
+          getline(iss, text, '$');
+          groups[group_id].create_article(title, author, text);
         }
-        create_article(group_id, title, author, text);
-      }
     }
     file.close();
   }
@@ -113,10 +125,10 @@ void DatabaseFile::save() {
   ofstream file(db);
   if (file.is_open()) {
     for (auto it = groups.begin(); it != groups.end(); ++it) {
-      file << "GROUP " << it->second.get_name() << endl;
+      file << "$GROUP$" << it->second.get_newsgroupId() << "$" << it->second.get_name() << "$" <<endl;
       vector<Article> articles = it->second.get_articles();
       for (auto a_it = articles.begin(); a_it != articles.end(); ++a_it) {
-        file << "ART " << a_it->get_id() << " " << a_it->get_title() << " " << a_it->get_author() << " " << a_it->get_text() << endl;
+        file << "$ART$" << it->second.get_newsgroupId() << "$" << a_it->get_title() << "$" << a_it->get_author() << "$" << a_it->get_text() << "$" << endl;
       }
     }
   }
