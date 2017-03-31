@@ -22,8 +22,7 @@ exit(1); }
     } catch (exception& e) {
         cerr << "Wrong port number. " << e.what() << endl;
 exit(1); }
-    Connection con(argv[1], port);
-    auto conn = make_shared<Connection>(con);
+    Connection conn(argv[1], port);
     if (!conn.isConnected()) {
         cerr << "Connection attempt failed" << endl;
 exit(1); }
