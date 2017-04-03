@@ -10,3 +10,5 @@ daw
 
 daw$
 $GROUP$3$This is a group with a long title, but the server must be able to handle that.$
+$GROUP$4$AA$
+$GROUP$6$A B C D E F G$
