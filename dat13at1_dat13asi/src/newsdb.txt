@@ -3,12 +3,4 @@ $ART$1$Article 2$Another author$A somewhat longer text,
 containing more than one line.
 To be exact, three lines.
 $
-$ART$1$1$1$daw
-daw
-
-
-
-daw$
 $GROUP$3$This is a group with a long title, but the server must be able to handle that.$
-$GROUP$4$AA$
-$GROUP$6$A B C D E F G$

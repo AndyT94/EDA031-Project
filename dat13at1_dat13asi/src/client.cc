@@ -222,7 +222,7 @@
               cin.clear();
               cin.ignore(numeric_limits<streamsize>::max(), '\n');
             } else {
-              cout << "Give the id of the article you want to delete: ";
+              cout << "Give the id of the article you want to read: ";
               int a_id;
               cin >> a_id;
               if(!cin) {
@@ -241,7 +241,7 @@
                   string author = mh.recv_string_paramter(conn);
                   string text = mh.recv_string_paramter(conn);
 
-                  cout << "Title: " << title << endl << "Author: " << endl
+                  cout << "Title: " << title << endl << "Author: " << author << endl
                     << "Text: " << text << endl;
                 } else {
                   if (mh.recv_code(conn) == Protocol::ERR_NG_DOES_NOT_EXIST) {
