@@ -38,12 +38,7 @@ bool DatabaseFile::create_newsgroup(const string& name) {
   NewsGroup n(newest_group, name);
   groups.insert(make_pair(newest_group, n));
   ++newest_group;
-  vector<NewsGroup> r = list_newsgroups();
-  for (auto it = r.begin(); it != r.end(); ++it) {
-    cout << it->get_name() << endl;
-  }
   save();
-
   return true;
 }
 
@@ -131,7 +126,6 @@ void DatabaseFile::load(const string& filename) {
 void DatabaseFile::save() {
   ofstream file(db);
   if (file.is_open()) {
-    cout << "OPENED" << endl;
     for (auto it = groups.begin(); it != groups.end(); ++it) {
       file << "$GROUP$" << it->second.get_newsgroupId() << "$" << it->second.get_name() << "$" <<endl;
       vector<Article> articles = it->second.get_articles();
